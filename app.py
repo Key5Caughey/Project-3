@@ -1,5 +1,5 @@
 # Importing all the good stuff
-from flask import Flask, jsonify, render_template_string
+from flask import Flask, jsonify, render_template_string, render_template
 from sqlalchemy import create_engine
 import pandas as pd
 import plotly.express as px
@@ -14,6 +14,10 @@ engine = create_engine('sqlite:///social_media_data.db')
 # Time to load up the data when the app starts
 df1 = pd.read_sql_query("SELECT * FROM us_social_media", engine)
 df2 = pd.read_sql_query("SELECT * FROM google_trends", engine)
+
+@app.route("/")
+def home_page():
+    return("<h1>This is the Landing page</h1>")
 
 # Here's my route for the US social media data
 @app.route("/api/v1.0/us_social_media")
@@ -41,8 +45,8 @@ def plot():
     plot_html = pio.to_html(fig, full_html=False)
     
     # Sending the plot as HTML
-    return render_template_string("<html><body>{{plot}}</body></html>", plot=plot_html)
+    return render_template("plot.html", plot=plot_html)
 
 # Time to run the app!
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(port=3000, debug=True)
